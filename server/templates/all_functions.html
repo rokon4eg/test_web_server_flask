@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <table>
+        <tr>
+            {% for col_name in headers %}
+            <th>{{col_name}}</th>
+            {% endfor %}
+        </tr>
+        {% for func_property in functions %}
+        <tr>
+            {% for property in func_property %}
+            <td>{{ property | safe}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

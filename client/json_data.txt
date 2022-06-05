@@ -1,0 +1,1 @@
+{"module": "myname", "function": "mytest", "data": {"ERROR number 1": {"ident": "2.1.11", "value": " test   test   "}, "ERROR number 2": {"ident": "2.1.2", "value": "a bla bla   "}, "ERROR number 3": {"ident": "1.5", "value": " Boo Boo     Boo"}}}
