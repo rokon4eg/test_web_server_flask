@@ -1,3 +1,4 @@
+import argparse
 from importlib import import_module
 from inspect import getmembers, getdoc, getsourcelines, isfunction
 from json.decoder import JSONDecodeError
@@ -9,6 +10,7 @@ from flask import Flask, render_template, request, json
 app = Flask('test-web-server')
 
 DIR_AUTO_IMPORT = 'auto_import'  # Каталог для размещения модулей доступных для автоимпорта
+PORT = 7000
 
 
 @app.route('/')
@@ -34,23 +36,25 @@ def get_all_functions(dir_, file_mask):
 @app.route('/html/')
 def display_all_functions():
     headers = ['Модуль', 'Функция', 'Описание', 'Код']
-    functions = get_all_functions(DIR_AUTO_IMPORT, '*.py')
-    return render_template("all_functions.html", functions=functions, headers=headers)
+    functions = get_all_functions(autoimport_module_dir, '*.py')
+    return render_template('all_functions.html', functions=functions, headers=headers)
 
 
 @app.route('/json/', methods=['POST'])
 def response_json():
-    module_name, func_name = '', ''
+    module_name = func_name = ''
     try:
         request_data = json.loads(request.data)
         module_name = request_data.get('module', '')
         func_name = request_data.get('function', '')
         data = request_data.get('data', '')
-        func = getattr(import_module(f'{DIR_AUTO_IMPORT}.{module_name}'), func_name)
+        func = getattr(import_module(f'{autoimport_module_dir}.{module_name}'), func_name)
         request_data.update({'data': func(data)})
         response = request_data
     except JSONDecodeError:
         response = (f'Полученные данные не JSON', 400)
+    except ValueError as err:
+        response = (str(err), 400)
     except ModuleNotFoundError:
         response = (f'Unknown module "{module_name}"', 500)
     except AttributeError:
@@ -59,4 +63,10 @@ def response_json():
 
 
 if __name__ == "__main__":
-    app.run(port=7000)
+    parser = argparse.ArgumentParser(description='Server for get POST data from client and send answer')
+    parser.add_argument('-port', type=int, default=PORT, help=f'Port (default: {PORT})')
+    parser.add_argument('-dir', type=str, default=DIR_AUTO_IMPORT,
+                        help=f'Directory on the server with autoimport modules (default: {DIR_AUTO_IMPORT})')
+    args = parser.parse_args()
+    autoimport_module_dir = args.dir
+    app.run(port=args.port)

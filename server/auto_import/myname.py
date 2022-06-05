@@ -5,7 +5,10 @@ def mytest(data: dict):
     После этого обработанные данные возвращаются клиенту
     """
     values = list(data.values())
-    values.sort(key=lambda value: [int(num) for num in value.get('ident').split('.')])
-    [item.update({'value': item.get('value').split()}) for item in values]
-    sorted_data = dict(zip(data.keys(), values))
-    return sorted_data
+    try:
+        values.sort(key=lambda value: [int(num) for num in value.get('ident', '').split('.')])
+        [item.update({'value': item.get('value', '').split()}) for item in values]
+        sorted_data = dict(zip(data.keys(), values))
+        return sorted_data
+    except ValueError:
+        raise
