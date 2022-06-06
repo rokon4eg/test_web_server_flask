@@ -1,10 +1,11 @@
 import argparse
+import json
 from importlib import import_module
 from inspect import getmembers, getdoc, getsourcelines, isfunction
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request
 
 
 app = Flask('test-web-server')
@@ -50,7 +51,7 @@ def response_json():
         data = request_data.get('data', '')
         func = getattr(import_module(f'{autoimport_module_dir}.{module_name}'), func_name)
         request_data['data'] = func(data)
-        response = request_data
+        response = json.dumps(request_data)
     except JSONDecodeError:
         response = (f'Полученные данные не JSON', 400)
     except ValueError as err:
@@ -69,4 +70,4 @@ if __name__ == "__main__":
                         help=f'Directory on the server with autoimport modules (default: {DIR_AUTO_IMPORT})')
     args = parser.parse_args()
     autoimport_module_dir = args.dir
-    app.run(port=args.port)
+    app.run(port=args.port, debug=True)
