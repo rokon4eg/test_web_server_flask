@@ -4,12 +4,12 @@ def mytest(data: dict):
     Поле "value" меняет строковое значение на массив из слов, удаляя все символы “ “ вокруг.
     После этого обработанные данные возвращаются клиенту
     """
-    values = list(data.values())
+    items = list(data.items())
     try:
-        values.sort(key=lambda value: [int(num) for num in value.get('ident', '').split('.')])
-        for item in values:
-            item.update({'value': item.get('value', '').split()})
-        sorted_data = dict(zip(data.keys(), values))
+        items.sort(key=lambda item: [int(num) for num in item[1].get('ident', '').split('.')])
+        for item in items:
+            item[1].update({'value': item[1].get('value', '').split()})
+        sorted_data = dict(items)
         return sorted_data
     except ValueError:
         raise
