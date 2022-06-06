@@ -5,11 +5,7 @@ def mytest(data: dict):
     После этого обработанные данные возвращаются клиенту
     """
     items = list(data.items())
-    try:
-        items.sort(key=lambda item: [int(num) for num in item[1].get('ident', '').split('.')])
-        for item in items:
-            item[1].update({'value': item[1].get('value', '').split()})
-        sorted_data = dict(items)
-        return sorted_data
-    except ValueError:
-        raise
+    items.sort(key=lambda item: [int(num) for num in item[1].get('ident', '').split('.')])
+    for item in items:
+        item[1].update({'value': item[1].get('value', '').split()})
+    return dict(items)

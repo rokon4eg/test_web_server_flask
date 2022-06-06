@@ -49,7 +49,7 @@ def response_json():
         func_name = request_data.get('function', '')
         data = request_data.get('data', '')
         func = getattr(import_module(f'{autoimport_module_dir}.{module_name}'), func_name)
-        request_data.update({'data': func(data)})
+        request_data['data'] = func(data)
         response = request_data
     except JSONDecodeError:
         response = (f'Полученные данные не JSON', 400)
