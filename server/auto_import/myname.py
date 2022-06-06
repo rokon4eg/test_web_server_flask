@@ -7,7 +7,8 @@ def mytest(data: dict):
     values = list(data.values())
     try:
         values.sort(key=lambda value: [int(num) for num in value.get('ident', '').split('.')])
-        [item.update({'value': item.get('value', '').split()}) for item in values]
+        for item in values:
+            item.update({'value': item.get('value', '').split()})
         sorted_data = dict(zip(data.keys(), values))
         return sorted_data
     except ValueError:
